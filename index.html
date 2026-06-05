@@ -1,65 +1,77 @@
 <!DOCTYPE html>
-<html lang="ko" data-theme="classic">
+<html lang="ko" data-theme="mystic">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>타로 · Universal Waite — 커버플로우 리딩</title>
-  <meta name="description" content="유니버설 웨이트(RWS) 타로 78장을 커버플로우로 넘겨 보고, 장 수를 골라 그 자리에서 뽑아 3000단어 해석을 읽는 웹앱." />
+  <title>Arcana Flow — 유니버설 웨이트 타로</title>
+  <meta name="description" content="유니버설 웨이트(RWS) 타로 78장을 커버플로우로 넘겨 보고, 장 수를 골라 그 자리에서 뽑아 장문 해석을 읽는 웹앱." />
   <link rel="preconnect" href="https://commons.wikimedia.org" />
   <link rel="stylesheet" href="css/styles.css" />
 </head>
-<body data-theme="classic">
-  <!-- ===== 상단 ===== -->
+<body data-theme="mystic">
+
+  <!-- ===== 상단 헤더 ===== -->
   <header class="topbar">
     <div class="brand">
-      <span class="brand-mark">✦</span>
-      <div>
+      <span class="brand-mark" aria-hidden="true">✦</span>
+      <div class="brand-text">
         <h1>Arcana Flow</h1>
         <p class="brand-sub">유니버설 웨이트 · 커버플로우 리딩</p>
       </div>
     </div>
-    <div class="theme-picker" id="themePicker" aria-label="카드 테마 선택">
-      <!-- 테마 칩이 JS로 채워진다 -->
-    </div>
+    <nav class="theme-picker" id="themePicker" aria-label="테마 선택">
+      <!-- JS로 채워짐 -->
+    </nav>
   </header>
 
   <main>
     <!-- ===== 커버플로우 ===== -->
     <section class="flow-section" aria-label="덱 둘러보기">
-      <div class="flow-stage" id="flowStage">
-        <div class="flow-track" id="flowTrack"><!-- 카드가 JS로 렌더 --></div>
+      <div class="flow-stage" id="flowStage" role="listbox" aria-label="타로 카드 덱">
+        <div class="flow-track" id="flowTrack"></div>
       </div>
-      <div class="flow-nav">
-        <button class="ghost-btn" id="flowPrev" aria-label="이전 카드">‹</button>
-        <div class="flow-meta" id="flowMeta">—</div>
-        <button class="ghost-btn" id="flowNext" aria-label="다음 카드">›</button>
+      <div class="flow-nav" role="group" aria-label="덱 탐색">
+        <button class="ghost-btn flow-btn" id="flowPrev" aria-label="이전 카드">‹</button>
+        <div class="flow-meta" id="flowMeta" aria-live="polite">—</div>
+        <button class="ghost-btn flow-btn" id="flowNext" aria-label="다음 카드">›</button>
       </div>
-      <input type="range" id="flowRange" class="flow-range" min="0" max="77" value="0" aria-label="덱 스크럽" />
+      <div class="flow-scrub">
+        <input type="range" id="flowRange" class="flow-range" min="0" max="77" value="0" aria-label="덱 스크럽" />
+      </div>
     </section>
 
-    <!-- ===== 추첨 컨트롤 ===== -->
-    <section class="draw-panel">
-      <div class="draw-row">
-        <div class="field">
-          <label>스프레드 / 장 수</label>
-          <div class="count-chips" id="countChips"></div>
+    <!-- ===== 추첨 패널 ===== -->
+    <section class="draw-panel" aria-label="카드 뽑기">
+      <div class="draw-panel-inner">
+        <div class="draw-row">
+          <div class="field">
+            <label class="field-label">스프레드</label>
+            <div class="count-chips" id="countChips" role="group" aria-label="스프레드 종류 선택"></div>
+          </div>
+          <div class="field grow">
+            <label class="field-label" for="seedInput">시드 <span class="field-hint">(선택 — 같은 시드 = 같은 결과)</span></label>
+            <input type="text" id="seedInput" class="seed-input" placeholder="비워 두면 뽑는 순간의 밀리초로 자동 생성" autocomplete="off" />
+          </div>
+          <button class="primary-btn" id="drawBtn">
+            <span class="btn-icon" aria-hidden="true">✦</span>
+            <span class="btn-label">카드 뽑기</span>
+          </button>
         </div>
-        <div class="field grow">
-          <label>나만의 시드 (선택) — 같은 시드 = 같은 결과</label>
-          <input type="text" id="seedInput" class="seed-input" placeholder="비워 두면 '뽑는 순간'의 밀리초로 자동 생성" />
-        </div>
-        <button class="primary-btn" id="drawBtn">카드 뽑기</button>
+        <p class="draw-hint" id="drawHint">
+          버튼을 누른 정확한 밀리초가 시드가 됩니다 — 클릭 타이밍의 미세한 차이가 전혀 다른 운명으로 갈라집니다.
+        </p>
       </div>
-      <p class="draw-hint" id="drawHint">버튼을 누른 정확한 밀리초가 시드가 됩니다. 클릭 타이밍의 미세한 차이가 전혀 다른 운명으로 갈라집니다.</p>
     </section>
 
-    <!-- ===== 추첨 결과 + 해석 ===== -->
-    <section class="results" id="results" aria-live="polite"></section>
+    <!-- ===== 결과 + 해석 ===== -->
+    <section class="results" id="results" aria-live="polite" aria-label="추첨 결과"></section>
 
     <!-- ===== 아카이브 ===== -->
-    <section class="archive-section">
+    <section class="archive-section" aria-label="뽑기 기록">
       <div class="archive-head">
-        <h2>뽑았던 카드 · 아카이브</h2>
+        <h2 class="archive-title">
+          <span aria-hidden="true">◈</span> 뽑았던 카드 아카이브
+        </h2>
         <div class="archive-actions">
           <button class="ghost-btn sm" id="archiveToggle">펼치기</button>
           <button class="ghost-btn sm danger" id="archiveClear">전체 삭제</button>
@@ -74,7 +86,6 @@
     <p class="disclaimer">합성 해석 / synthetic interpretation. 오락·성찰 목적이며, 의학·법률·재정적 조언이 아닙니다.</p>
   </footer>
 
-  <!-- 카드 상세 해석 모달은 결과 영역 인라인으로 펼쳐집니다 -->
   <script src="js/rng.js"></script>
   <script src="js/archive.js"></script>
   <script src="js/cards.js"></script>

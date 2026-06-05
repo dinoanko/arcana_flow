@@ -586,11 +586,21 @@
   // ----- 마이너 아르카나 -----------------------------------------------------
   // 수트별 원소/주제와 코트(11~14=Page/Knight/Queen/King) 파일명 규칙.
   const SUITS = {
-    wands:     { ko: '완드(지팡이)',   element: '불', file: 'Wands',  theme: '의지·열정·창조·행동' },
-    cups:      { ko: '컵(성배)',       element: '물', file: 'Cups',   theme: '감정·관계·직관·사랑' },
+    wands:     { ko: '완드(지팡이)',   element: '불',   file: 'Wands',  theme: '의지·열정·창조·행동' },
+    cups:      { ko: '컵(성배)',       element: '물',   file: 'Cups',   theme: '감정·관계·직관·사랑' },
     swords:    { ko: '소드(검)',       element: '공기', file: 'Swords', theme: '사고·진실·갈등·말' },
-    pentacles: { ko: '펜타클(동전)',   element: '흙', file: 'Pents',  theme: '물질·일·몸·결실' }
+    pentacles: { ko: '펜타클(동전)',   element: '흙',   file: 'Pents',  theme: '물질·일·몸·결실' }
   };
+
+  // 마이너 아르카나 랭크 → Wikimedia Commons RWS 파일명 토큰
+  function minorRankToken(n) {
+    if (n === 1)  return '01'; // Ace
+    if (n === 11) return 'Page';
+    if (n === 12) return 'Knight';
+    if (n === 13) return 'Queen';
+    if (n === 14) return 'King';
+    return String(n).padStart(2, '0');
+  }
 
   // 핍 카드(에이스~10) 숫자별 보편 의미 — 수트 주제와 결합해 씨앗을 만든다.
   const PIP = {
@@ -614,8 +624,6 @@
     14: { ko: '킹', seed: '다스리는 자, 밖으로 완성된 통달', light: ['숙달과 책임', '안정된 권위', '비전'], shadow: ['경직', '지배', '냉혹'] }
   };
 
-  function courtFileIndex(n) { return String(n).padStart(2, '0'); }
-
   const MINOR = [];
   Object.keys(SUITS).forEach(function (suitKey) {
     const s = SUITS[suitKey];
@@ -634,7 +642,7 @@
         suit: suitKey,
         name: nameEn,
         ko: s.ko + ' ' + rankKo,
-        img: s.file + courtFileIndex(n) + '.jpg',
+        img: 'RWS_Tarot_' + s.file + '_' + minorRankToken(n) + '.jpg',
         element: s.element,
         astro: null,
         yesno: (meta.light && meta.light.length) ? 'maybe' : 'maybe',
